@@ -32,19 +32,40 @@ MongoClient.connect(
     //   .catch(error => {
     //     console.log(error);
     //   });
-    db.collection("tasks")
-      .updateMany(
-        {
-          completed: false
-        },
-        {
-          $set: {
-            completed: true
-          }
-        }
-      )
+    // db.collection("tasks")
+    //   .updateMany(
+    //     {
+    //       completed: false
+    //     },
+    //     {
+    //       $set: {
+    //         completed: true
+    //       }
+    //     }
+    //   )
+    //   .then(result => {
+    //     console.log(result);
+    //   })
+    //   .catch(error => {
+    //     console.log(error);
+    //   });
+
+    db.collection("users")
+      .deleteOne({
+        _id: new ObjectID("5cb59eb62ef6f43f0896dd6a")
+      })
       .then(result => {
         console.log(result);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    db.collection("users")
+      .deleteMany({
+        name: "Mou"
+      })
+      .then(result => {
+        console.log(result.deletedCount);
       })
       .catch(error => {
         console.log(error);
