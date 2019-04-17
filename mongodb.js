@@ -1,7 +1,6 @@
 //CRUD operation
 
-const mongodb = require("mongodb"); //mongodb is a native driver
-const MongoClient = mongodb.MongoClient; // let us connect to database
+const { MongoClient, ObjectID } = require("mongodb");
 
 const connectionURL = "mongodb://127.0.0.1:27017"; //connect to localhost server
 const databaseName = "task-manager";
@@ -16,63 +15,48 @@ MongoClient.connect(
     // console.log("Connection Established");
     const db = client.db(databaseName); // autometicaly creates the database if not found
 
-    //insert one document
-    db.collection("users").insertOne(
-      {
-        name: "Zarab",
-        age: 25
-      },
-      (error, result) => {
+    // db.collection("users").findOne(
+    //   { _id: new ObjectID("5cb59eb62ef6f43f0896dd6c") },
+    //   (error, user) => {
+    //     if (error) {
+    //       return console.log("unable to fetch");
+    //     }
+    //     console.log(user);
+    //   }
+    // );
+    // db.collection("users")
+    //   .find({ name: "Zarab" })
+    //   .toArray((error, users) => {
+    //     if (error) {
+    //       console.log("unable to fetch users");
+    //     }
+    //     console.log(users);
+    //   });
+    // db.collection("users")
+    //   .find({ name: "Zarab" })
+    //   .count((error, count) => {
+    //     if (error) {
+    //       console.log("unable to fetch users");
+    //     }
+    //     console.log(count);
+    //   });
+    db.collection("tasks").findOne(
+      { _id: ObjectID("5cb59eb62ef6f43f0896dd6f") },
+      (error, task) => {
         if (error) {
-          return console.log("Unable to insert user");
+          return console.log(error);
         }
-
-        console.log(result.ops);
+        console.log(task);
       }
     );
 
-    //insert multiple documents
-    db.collection("users").insertMany(
-      [
-        {
-          name: "Mou",
-          age: 24
-        },
-        {
-          name: "Raju",
-          age: 21
-        }
-      ],
-      (error, result) => {
+    db.collection("tasks")
+      .find({ completed: false })
+      .toArray((error, tasks) => {
         if (error) {
-          return console.log("Unable to insert documents");
+          console.log("Unable to find tasks");
         }
-        console.log(result.ops);
-      }
-    );
-
-    //insert multiple documents
-    db.collection("tasks").insertMany(
-      [
-        {
-          description: "Eating lunch",
-          completed: true
-        },
-        {
-          description: "Performing salah",
-          completed: false
-        },
-        {
-          description: "Charging my phone",
-          completed: true
-        }
-      ],
-      (error, result) => {
-        if (error) {
-          return console.log("Unable to insert documents");
-        }
-        console.log(result.ops);
-      }
-    );
+        console.log(tasks);
+      });
   }
 );
