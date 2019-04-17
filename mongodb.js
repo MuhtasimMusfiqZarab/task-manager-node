@@ -15,48 +15,39 @@ MongoClient.connect(
     // console.log("Connection Established");
     const db = client.db(databaseName); // autometicaly creates the database if not found
 
-    // db.collection("users").findOne(
-    //   { _id: new ObjectID("5cb59eb62ef6f43f0896dd6c") },
-    //   (error, user) => {
-    //     if (error) {
-    //       return console.log("unable to fetch");
-    //     }
-    //     console.log(user);
-    //   }
-    // );
     // db.collection("users")
-    //   .find({ name: "Zarab" })
-    //   .toArray((error, users) => {
-    //     if (error) {
-    //       console.log("unable to fetch users");
+    //   .updateOne(
+    //     {
+    //       _id: new ObjectID("5cb598853bbb12285478b6f4")
+    //     },
+    //     {
+    //       $inc: {
+    //         age: 1
+    //       }
     //     }
-    //     console.log(users);
+    //   )
+    //   .then(result => {
+    //     console.log(result);
+    //   })
+    //   .catch(error => {
+    //     console.log(error);
     //   });
-    // db.collection("users")
-    //   .find({ name: "Zarab" })
-    //   .count((error, count) => {
-    //     if (error) {
-    //       console.log("unable to fetch users");
-    //     }
-    //     console.log(count);
-    //   });
-    db.collection("tasks").findOne(
-      { _id: ObjectID("5cb59eb62ef6f43f0896dd6f") },
-      (error, task) => {
-        if (error) {
-          return console.log(error);
-        }
-        console.log(task);
-      }
-    );
-
     db.collection("tasks")
-      .find({ completed: false })
-      .toArray((error, tasks) => {
-        if (error) {
-          console.log("Unable to find tasks");
+      .updateMany(
+        {
+          completed: false
+        },
+        {
+          $set: {
+            completed: true
+          }
         }
-        console.log(tasks);
+      )
+      .then(result => {
+        console.log(result);
+      })
+      .catch(error => {
+        console.log(error);
       });
   }
 );
