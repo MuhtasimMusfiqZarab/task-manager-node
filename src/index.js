@@ -44,7 +44,38 @@ app.get("/users/:id", async (req, res) => {
     }
     res.send(user);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send(error.message);
+  }
+});
+
+//updating user (resource)
+app.patch("/users/:id", async (req, res) => {
+  //converting object's properties to an array
+  const updates = Object.keys(req.body);
+
+  const allowedUpdates = ["name", "email", "password", "age"];
+
+  //validating if update is allowed
+  const isValidOperation = updates.every(update => {
+    return allowedUpdates.includes(update);
+  });
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: "Invalid updates!" });
+  }
+
+  try {
+    // options: returns new user with update, validates the update
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+    if (!user) {
+      return res.status(404).send();
+    }
+    res.send(user);
+  } catch (error) {
+    res.status(400).send(error);
   }
 });
 
@@ -79,6 +110,37 @@ app.get("/tasks/:id", async (req, res) => {
     res.send(task);
   } catch (error) {
     res.status(404).send();
+  }
+});
+
+//updating user (resource)
+app.patch("/tasks/:id", async (req, res) => {
+  //converting object's properties to an array
+  const updates = Object.keys(req.body);
+
+  const allowedUpdates = ["description", "completed"];
+
+  //validating if update is allowed
+  const isValidOperation = updates.every(update => {
+    return allowedUpdates.includes(update);
+  });
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: "Invalid updates!" });
+  }
+
+  try {
+    // options: returns new user with update, validates the update
+    const task = await Task.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+    if (!task) {
+      return res.status(404).send();
+    }
+    res.send(task);
+  } catch (error) {
+    res.status(400).send(error);
   }
 });
 
