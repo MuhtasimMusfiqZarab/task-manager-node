@@ -2,7 +2,7 @@ const express = require("express");
 const router = new express.Router();
 
 //loading task model
-const Task = require("./models/task");
+const Task = require("../models/task");
 
 //Creating tasks(resourses)
 router.post("/tasks", async (req, res) => {
@@ -84,3 +84,5 @@ router.delete("/tasks/:id", async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+module.exports = router;
