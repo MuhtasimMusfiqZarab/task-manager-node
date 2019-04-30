@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 //create schema
 const userSchema = mongoose.Schema({
@@ -40,10 +41,31 @@ const userSchema = mongoose.Schema({
         throw new Error("The password should not contain password string");
       }
     }
-  }
+  },
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true
+      }
+    }
+  ]
 });
 
+//creating Instance of User model(user)'s method
+//methods are accesible on instances
+userSchema.methods.generateAuthToken = async function() {
+  const user = this;
+  const token = jwt.sign({ _id: user._id.toString() }, "thisismynewcourse");
+  //adding token to user
+  user.tokens = user.tokens.concat({ token });
+  // saving tokens to db
+  await user.save();
+  return token;
+};
+
 //defining findByCredentials
+//static methods are accesible on Model
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
   if (!user) {
@@ -58,6 +80,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
 
 //user method(save) on userSchema to set the middleware up
 //(hashing before saving)
+//no arrow func is used because this binding is needed
 userSchema.pre("save", async function(next) {
   const user = this;
 
