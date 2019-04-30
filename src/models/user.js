@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
 
-//Definig  User model
-const User = mongoose.model("User", {
+//create schema
+const userSchema = mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -40,5 +41,20 @@ const User = mongoose.model("User", {
     }
   }
 });
+
+//user method(save) on userSchema to set the middleware up
+userSchema.pre("save", async function(next) {
+  const user = this;
+
+  //here is modified is true if an user was created or password filled is changed
+  if (user.isModified("password")) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+
+  next(); //used to say that func is over
+});
+
+//Definig  User model
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
