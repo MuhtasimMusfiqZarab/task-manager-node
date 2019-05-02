@@ -34,11 +34,48 @@ router.post("/users/login", async (req, res) => {
   }
 });
 
+//getiing logged out
+router.post("/users/logout", auth, async (req, res) => {
+  try {
+    const user = await req.user;
+    user.tokens = user.tokens.filter(token => {
+      return token.token !== req.token;
+    });
+    //saving the new array of tokens after logging out
+    //removing the token
+    await user.save();
+    res.status(200).send("Logged Out");
+  } catch (error) {
+    res.status(501).send(error.message);
+  }
+});
+//getiing logged out from all account
+router.post("/users/logoutAll", auth, async (req, res) => {
+  try {
+    let user = await req.user.tokens;
+    // let tokens = await req.user.tokens;
+    user.splice(0, user.length);
+    // const user = await req.user;
+    // user.tokens = [];
+    //removing all tokens
+    await user.save();
+    res.status(200).send("Logged Out From All Sessions");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 //getting logged in profile
 router.get("/users/me", auth, async (req, res) => {
   try {
-    res.send(await req.currentUser);
-  } catch (error) {}
+    const user = await req.user;
+    if (!user) {
+      res.status(404).send("you are not authenticated");
+    }
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 });
 
 //fetching user by id
