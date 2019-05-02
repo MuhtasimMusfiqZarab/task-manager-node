@@ -80,23 +80,8 @@ router.get("/users/me", auth, async (req, res) => {
   }
 });
 
-//fetching user by id
-router.get("/users/:id", async (req, res) => {
-  const _id = req.params.id; //req.params constains the route parameter(:id)
-
-  try {
-    const user = await User.findById(_id);
-    if (!user) {
-      res.status(404).send();
-    }
-    res.send(user);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-
 //updating user (resource)
-router.patch("/users/:id", async (req, res) => {
+router.patch("/users/me", auth, async (req, res) => {
   //converting object's properties to an array
   const updates = Object.keys(req.body);
 
@@ -118,16 +103,13 @@ router.patch("/users/:id", async (req, res) => {
     //   runValidators: true
     // }); // find by id bypasses mongoose (mongoose middleware) thus we are using the following code
 
-    const user = await User.findById(req.params.id);
+    const user = await req.user;
 
     updates.forEach(update => {
       user[update] = req.body[update];
     });
 
     await user.save();
-    if (!user) {
-      return res.status(404).send();
-    }
     res.send(user);
   } catch (error) {
     res.status(400).send(error);
@@ -135,13 +117,9 @@ router.patch("/users/:id", async (req, res) => {
 });
 
 //Deleting user
-router.delete("/users/:id", async (req, res) => {
+router.delete("/users/me", auth, async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
-
-    if (!user) {
-      res.status(404).send();
-    }
+    const user = await req.user.remove();
     res.send(user);
   } catch (error) {
     res.status(500).send(erorr.message);
