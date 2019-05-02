@@ -52,9 +52,9 @@ router.post("/users/logout", auth, async (req, res) => {
 //getiing logged out from all account
 router.post("/users/logoutAll", auth, async (req, res) => {
   try {
-    let user = await req.user.tokens;
+    let user = await req.user;
     // let tokens = await req.user.tokens;
-    user.splice(0, user.length);
+    user.tokens.splice(0, user.tokens.length);
     // const user = await req.user;
     // user.tokens = [];
     //removing all tokens
