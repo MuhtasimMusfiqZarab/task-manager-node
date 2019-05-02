@@ -3,6 +3,7 @@ const express = require("express");
 const router = new express.Router();
 //load user model
 const User = require("../models/user");
+const auth = require("../middleware/auth");
 
 //creating user(resourses)
 router.post("/users", async (req, res) => {
@@ -33,14 +34,11 @@ router.post("/users/login", async (req, res) => {
   }
 });
 
-//getting multiple resources
-router.get("/users", async (req, res) => {
+//getting logged in profile
+router.get("/users/me", auth, async (req, res) => {
   try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (error) {
-    res.status(500).send(error);
-  }
+    res.send(await req.currentUser);
+  } catch (error) {}
 });
 
 //fetching user by id

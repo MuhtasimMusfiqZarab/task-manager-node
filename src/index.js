@@ -22,13 +22,13 @@ const port = process.env.PORT || 3000;
 // });
 
 //registering middleware for maintainance mode
-app.use((req, res, next) => {
-  if (req) {
-    res.send("The Server is under maintainance");
-  } else {
-    next();
-  }
-});
+// app.use((req, res, next) => {
+//   if (req) {
+//     res.send("The Server is under maintainance");
+//   } else {
+//     next();
+//   }
+// });
 
 //parse incoming postman JSON(which is a request) for us to get accesible as an object we can use in req.body
 app.use(express.json());
