@@ -52,6 +52,15 @@ const userSchema = mongoose.Schema({
   ]
 });
 
+//adding virtual property (not acctual data to db, but a relationship between 2 entities)
+//Here the entities are User and Task
+// it is just used by monggoese to figure out who owns what tasks(how they are related)
+userSchema.virtual("tasks", {
+  ref: "Task", //Task Model
+  localField: "-id",
+  foreignField: "owner" //name of the field inside of Task model(the other thing which relates  to User)
+});
+
 //creating Instance of User model(user)'s method
 //methods are accesible on instances
 //userSchema.methods for methods on the instance and individual user
@@ -109,7 +118,7 @@ userSchema.pre("save", async function(next) {
   next(); //used to say that func is over
 });
 
-//Definig  User model
+//Definig  User model so that we can use the model named exactly as "User" here and on different files
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

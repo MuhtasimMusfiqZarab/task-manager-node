@@ -40,7 +40,7 @@ router.post("/users/login", async (req, res) => {
 //getiing logged out
 router.post("/users/logout", auth, async (req, res) => {
   try {
-    const user = await req.user;
+    const user = req.user;
     user.tokens = user.tokens.filter(token => {
       return token.token !== req.token;
     });
@@ -55,7 +55,7 @@ router.post("/users/logout", auth, async (req, res) => {
 //getiing logged out from all account
 router.post("/users/logoutAll", auth, async (req, res) => {
   try {
-    let user = await req.user;
+    let user = req.user;
     // let tokens = await req.user.tokens;
     user.tokens.splice(0, user.tokens.length);
 
@@ -70,7 +70,7 @@ router.post("/users/logoutAll", auth, async (req, res) => {
 //getting logged in profile
 router.get("/users/me", auth, async (req, res) => {
   try {
-    const user = await req.user;
+    const user = req.user;
     if (!user) {
       res.status(404).send("you are not authenticated");
     }
@@ -103,7 +103,7 @@ router.patch("/users/me", auth, async (req, res) => {
     //   runValidators: true
     // }); // find by id bypasses mongoose (mongoose middleware) thus we are using the following code
 
-    const user = await req.user;
+    const user = req.user;
 
     updates.forEach(update => {
       user[update] = req.body[update];
@@ -119,7 +119,7 @@ router.patch("/users/me", auth, async (req, res) => {
 //Deleting user
 router.delete("/users/me", auth, async (req, res) => {
   try {
-    const user = await req.user.remove();
+    const user = req.user.remove();
     res.send(user);
   } catch (error) {
     res.status(500).send(erorr.message);
