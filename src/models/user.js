@@ -54,6 +54,7 @@ const userSchema = mongoose.Schema({
 
 //creating Instance of User model(user)'s method
 //methods are accesible on instances
+//userSchema.methods for methods on the instance and individual user
 userSchema.methods.generateAuthToken = async function() {
   const user = this;
   const token = jwt.sign({ _id: user._id.toString() }, "thisismynewcourse");
@@ -64,8 +65,24 @@ userSchema.methods.generateAuthToken = async function() {
   return token;
 };
 
+//we dont wanna user arrow function as we are using this keyword
+//used to customize user object to show only necessary information
+// userSchema.methods.getPublicProfile can be replaced with userSchema.methods.toJSON
+//toJSON is called whenever object is stringyfied to JSON and res.send() does this stringfy authometically
+userSchema.methods.getPublicProfile = function() {
+  const user = this;
+  //toObject is provided by mongoose, which gives us  the raw profile data
+  //toObject is used to customize the raw user data which is to show to us
+  const userObject = user.toObject();
+  //deleting unnecessary information
+  delete userObject.password;
+  delete userObject.tokens;
+
+  return userObject;
+};
+
 //defining findByCredentials
-//static methods are accesible on Model
+//static methods are accesible on the actual Model==> Here the model is User
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
   if (!user) {

@@ -27,8 +27,11 @@ router.post("/users/login", async (req, res) => {
     ); //findByCredentials() is defined by us
 
     const token = await user.generateAuthToken();
-
-    res.send({ user, token });
+    //getPublicProfile allow us to customize what we want from user object
+    //res.send({ user: , token }); can be written if userSchema.methods.toJSON was used instead of custom function
+    //.toJSON  does not need explicitely called by user.toJSON
+    //toJSON is called whenever object is stringyfied to JSON and res.send() does this stringfy authometically
+    res.send({ user: user.getPublicProfile(), token });
   } catch (error) {
     res.status(400).send();
   }
@@ -55,8 +58,7 @@ router.post("/users/logoutAll", auth, async (req, res) => {
     let user = await req.user;
     // let tokens = await req.user.tokens;
     user.tokens.splice(0, user.tokens.length);
-    // const user = await req.user;
-    // user.tokens = [];
+
     //removing all tokens
     await user.save();
     res.status(200).send("Logged Out From All Sessions");
