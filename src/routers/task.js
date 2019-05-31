@@ -26,10 +26,14 @@ router.post("/tasks", auth, async (req, res) => {
 //Reading All Tasks
 router.get("/tasks", auth, async (req, res) => {
   try {
-    const tasks = await Task.find({ owner: req.user._id });
+    //getting only uncompleted
+    const tasks = await Task.find({
+      owner: req.user._id,
+      completed: req.query.completed //gets data from query string
+    });
     res.send(tasks);
   } catch (error) {
-    res.status(404).send();
+    res.status(500).send();
   }
 });
 
